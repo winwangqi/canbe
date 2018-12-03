@@ -6,7 +6,8 @@ const webpack = require('webpack')
 
 const resolve = dir => path.resolve(__dirname, dir)
 
-const config = require('./webpack.config')
+const serverConfig = require('./webpack.config.server')
+const clientConfig = require('./webpack.config.client')
 
 function onBuild(done) {
   return function (err, stats) {
@@ -21,20 +22,28 @@ function onBuild(done) {
 }
 
 gulp.task('server-build', done => {
-  webpack(config).run(onBuild(done))
+  webpack(serverConfig).run(onBuild(done))
 })
 
 gulp.task('server-watch', () => {
-  webpack(config).watch(1000, (err, stats) => {
+  webpack(serverConfig).watch(1000, (err, stats) => {
     onBuild(err, stats)
     nodemon.restart()
   })
 })
 
-gulp.task('run', ['server-build', 'server-watch'], () => {
+gulp.task('client-build', done => {
+  webpack(clientConfig).run(onBuild(done))
+})
+
+gulp.task('client-watch', () => {
+  webpack(clientConfig).watch(1000, onBuild())
+})
+
+gulp.task('default', ['server-build', 'server-watch', 'client-build', 'client-watch'], () => {
   nodemon({
-    script: resolve('./build/server'),
-    watch: ['build'],
+    script: resolve('../build/server'),
+    watch: [resolve('../build')],
     execMap: {
       js: 'node',
     },

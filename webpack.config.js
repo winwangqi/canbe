@@ -14,7 +14,7 @@ const config = {
   mode: 'development',
   target: 'node',
   devtool: '#eval-source-map',
-  entry: './src/server/index.js',
+  entry: './src/server/index.jsx',
   output: {
     path: resolve('build'),
     filename: 'server.js'
